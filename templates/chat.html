@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SehatMitra</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="brand-row">
+      <div class="avatar">🩺</div>
+      <div>
+        <h1>SehatMitra</h1>
+        <span>Your Health Companion</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Chat -->
+  <main id="chat" class="chat-body">
+    <div class="bubble bot">
+      👋 Hi! I’m SehatMitra.<br>
+      Tell me your age and what you’re feeling — I’ll guide you safely.
+      <div class="time"></div>
+    </div>
+  </main>
+
+  <!-- Typing Indicator -->
+  <div id="typing" class="typing hidden">
+    <span></span><span></span><span></span>
+  </div>
+
+  <!-- Input -->
+  <form id="chatForm" class="chat-input">
+    <input type="number" id="age" placeholder="Age" required>
+    <input type="text" id="symptoms" placeholder="Type your message..." required>
+    <button type="submit">➤</button>
+  </form>
+
+</div>
+
+<script>
+function addBubble(text, who, level=null, remedies=[]) {
+  const chat = document.getElementById("chat");
+  const time = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+
+  let badge = "";
+  if (who === "bot" && level) {
+    if (level === "emergency") badge = `<div class="badge danger">🚨 Emergency</div>`;
+    if (level === "doctor-soon") badge = `<div class="badge warn">🩺 Doctor Soon</div>`;
+    if (level === "home-care") badge = `<div class="badge safe">🏠 Home Care</div>`;
+  }
+
+  let tips = "";
+  if (remedies.length > 0) {
+    tips = "<ul class='tips'>" +
+      remedies.map(r => `<li>${r}</li>`).join("") +
+      "</ul>";
+  }
+
+  chat.innerHTML += `
+    <div class="bubble ${who}">
+      ${badge}
+      ${text}
+      ${tips}
+      <div class="time">${time}</div>
+    </div>
+  `;
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+document.getElementById("chatForm").onsubmit = async (e) => {
+  e.preventDefault();
+
+  const age = document.getElementById("age").value;
+  const symptoms = document.getElementById("symptoms").value;
+
+  addBubble(symptoms, "user");
+
+  document.getElementById("typing").classList.remove("hidden");
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: `age=${age}&symptoms=${symptoms}`
+  });
+
+  const data = await res.json();
+  document.getElementById("typing").classList.add("hidden");
+
+  addBubble(data.reply, "bot", data.level, data.remedies);
+  document.getElementById("symptoms").value = "";
+};
+</script>
+
+</body>
+</html>
