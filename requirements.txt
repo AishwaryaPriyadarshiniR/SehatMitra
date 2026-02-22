@@ -1,0 +1,7 @@
+flask
+python-dotenv
+groq
+scikit-learn
+pandas
+joblib
+gunicorn

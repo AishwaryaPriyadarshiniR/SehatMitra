@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+import os
 
 from symptom_normalizer import normalize_symptoms
 from ml_triage_text import predict_level
@@ -75,4 +76,6 @@ def chat():
     })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 5000))
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug)

@@ -54,7 +54,7 @@ The system follows a hybrid AI architecture combining machine learning, rule-bas
 
 6. **Conversational Polishing (LLM Layer)**
 
-   * Uses **Mistral AI (via Hugging Face Inference API)** to refine and structure responses in a friendly tone
+   * Uses **Groq API** to refine and structure responses in a friendly tone
    * Operates only as a presentation layer — medical decisions come from ML models and rules
 
 7. **Safety & Rule-Based Overrides**
@@ -100,7 +100,7 @@ The system follows a hybrid AI architecture combining machine learning, rule-bas
 
 ### **LLM Layer**
 
-* Mistral AI (`Mistral-7B-Instruct-v0.2`) via Hugging Face (optional response polishing)
+* Groq API with a configurable model (`GROQ_MODEL`, default: `llama-3.1-8b-instant`) for optional response polishing
 
 ### **Model Storage**
 
@@ -117,6 +117,59 @@ The system follows a hybrid AI architecture combining machine learning, rule-bas
 * Symptom normalization for real-world text
 * Hybrid ML + rule-based decision system
 * Optional multilingual and voice support (future work)
+
+---
+
+## **Revenue Model**
+
+SehatMitra can generate revenue through multiple B2B and B2C channels:
+
+* **Hospital and clinic integration (B2B SaaS):** License SehatMitra as a triage assistant embedded into hospital websites and apps with monthly or annual subscription pricing.
+* **Appointment platform partnerships:** Integrate with appointment booking ecosystems (for example, Practo-like platforms) to pre-triage users and route them to the right specialty, using per-API-call, per-lead, or revenue-share pricing.
+* **White-label offering:** Provide branded versions for healthcare providers, telemedicine startups, and insurance partners.
+* **API subscription plans:** Offer tiered plans (starter, growth, enterprise) with usage limits, support SLAs, and custom integrations.
+* **Analytics add-on for institutions:** Provide paid dashboards for symptom trends, patient intent insights, and operational planning.
+* **Premium patient features:** Offer optional paid upgrades such as follow-up reminders, multilingual voice support, and personalized preventive guidance.
+
+---
+
+## **Installation (Dependencies)**
+
+Install all required packages:
+
+```powershell
+pip install -r requirements.txt
+```
+
+`requirements.txt` includes:
+- `flask`
+- `python-dotenv`
+- `groq`
+- `scikit-learn`
+- `pandas`
+- `joblib`
+- `gunicorn`
+
+---
+
+## **Run Locally**
+
+1. Configure `.env`:
+
+```env
+GROQ_API_KEY="your_groq_api_key_here"
+GROQ_MODEL="llama-3.1-8b-instant"
+```
+
+2. Start the app:
+
+```powershell
+python app.py
+```
+
+3. Open in browser:
+
+`http://127.0.0.1:5000`
 
 ---
 

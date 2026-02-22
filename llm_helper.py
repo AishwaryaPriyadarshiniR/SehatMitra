@@ -1,13 +1,13 @@
-from huggingface_hub import InferenceClient
+from groq import Groq
 import os
 from dotenv import load_dotenv
 
 load_dotenv()  # loads variables from .env
 
-HF_TOKEN = os.getenv("HF_TOKEN")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-
-client = InferenceClient(token=HF_TOKEN)
+client = Groq(api_key=GROQ_API_KEY)
 
 def make_friendly_response(user_input, triage_result):
     """
@@ -33,11 +33,14 @@ def make_friendly_response(user_input, triage_result):
     - Keep it simple and readable
     """
 
-    response = client.text_generation(
-        model="mistralai/Mistral-7B-Instruct-v0.2",
-        prompt=prompt,
-        max_new_tokens=200,
-        temperature=0.3
+    response = client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[
+            {"role": "system", "content": "You are SehatMitra, a kind and safe health assistant."},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=200,
+        temperature=0.3,
     )
 
-    return response
+    return response.choices[0].message.content.strip()
